@@ -1,0 +1,73 @@
+apply plugin: 'com.android.application'
+
+android {
+    namespace 'com.example.mytablet'
+    compileSdk 28
+
+    defaultConfig {
+        applicationId "com.example.mytablet"
+        minSdk 19
+        targetSdk 26
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+//        ndk {
+//            abiFilters "armeabi-v7a", "x86","armeabi"  // 确保 ABI 兼容
+//        }
+        multiDexEnabled true  // 启用 MultiDex
+    }
+    viewBinding {
+        enabled = true
+    }
+    buildTypes {
+        release {
+            //在这里添加：
+            lintOptions {
+                checkReleaseBuilds false
+                abortOnError false
+            }
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        viewBinding true
+    }
+    sourceSets {
+        main() {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+}
+
+dependencies {
+    implementation files('libs\\javalib.jar')
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
+    def room_version = "2.2.6"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-rxjava2:$room_version"
+    implementation 'com.google.zxing:core:3.5.2'
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
+    implementation 'androidx.appcompat:appcompat:1.3.0'
+    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    implementation 'androidx.annotation:annotation:1.2.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'  // JSON 解析
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.12' // 日志拦截器（支持 API 19）
+    implementation 'de.hdodenhof:circleimageview:3.1.0'  // CircleImageView 库
+    implementation 'com.licheedev:android-serialport:2.1.5'
+    implementation 'com.github.belerweb:pinyin4j:2.5.0'
+}
