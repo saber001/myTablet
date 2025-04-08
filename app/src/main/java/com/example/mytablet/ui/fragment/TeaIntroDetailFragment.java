@@ -88,7 +88,7 @@ public class TeaIntroDetailFragment extends BaseFragment {
                   params.setMargins(dpToPx(10), 0, 0, 0); // 设置间距
                   button.setLayoutParams(params);
                   button.setText(subject);
-                  button.setTextSize(16);
+                  button.setTextSize(18);
                   button.setGravity(Gravity.CENTER);
                   button.setTextColor(Color.WHITE);
                   button.setBackgroundColor(Color.parseColor("#EE7802")); // 设置背景色
@@ -110,7 +110,6 @@ public class TeaIntroDetailFragment extends BaseFragment {
       });
    }
 
-   // 工具方法：dp 转 px
    private int dpToPx(int dp) {
       return (int) (dp * getResources().getDisplayMetrics().density);
    }

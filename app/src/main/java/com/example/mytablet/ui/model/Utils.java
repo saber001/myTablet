@@ -1,5 +1,10 @@
 package com.example.mytablet.ui.model;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.widget.TextView;
 import android.widget.Toast;
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
@@ -19,11 +24,38 @@ public class Utils {
    // 显示 Toast
    public static void showToast(String message) {
       if (appContext != null) {
-         Toast.makeText(appContext, message, Toast.LENGTH_SHORT).show();
+         Toast toast = new Toast(appContext);
+
+         // 自定义 Toast 布局
+         TextView textView = new TextView(appContext);
+         textView.setText(message);
+         textView.setTextSize(24); // 字体大一些
+         textView.setTextColor(Color.WHITE); // 字体颜色
+         textView.setBackgroundColor(Color.parseColor("#CC333333")); // 背景颜色带点透明
+         textView.setPadding(32, 16, 32, 16); // 内边距
+         textView.setGravity(Gravity.CENTER);
+
+         // 设置圆角背景（需要 API >= 16）
+         GradientDrawable bg = new GradientDrawable();
+         bg.setColor(Color.parseColor("#CC333333")); // 背景色
+         bg.setCornerRadius(24); // 圆角
+         textView.setBackground(bg);
+
+         toast.setView(textView);
+         toast.setDuration(Toast.LENGTH_LONG);
+         // 计算 20dp 的像素值
+         int yOffset = (int) TypedValue.applyDimension(
+                 TypedValue.COMPLEX_UNIT_DIP,
+                 20,
+                 appContext.getResources().getDisplayMetrics()
+         );
+         toast.setGravity(Gravity.BOTTOM, 0, yOffset); // 居中显示
+         toast.show();
       } else {
          throw new IllegalStateException("Utils is not initialized. Call Utils.init(context) in Application class.");
       }
    }
+
    public static String getLevelText(String level) {
       if (level == null || level.isEmpty()) {
          return "未知";  // 避免 null 引发异常

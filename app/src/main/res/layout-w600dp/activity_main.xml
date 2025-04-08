@@ -57,7 +57,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="daweimingcheng"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textColor="#383838"
                         android:layout_marginStart="8dp" />
                 </LinearLayout>
@@ -118,7 +118,7 @@
                 android:text="星周一"
                 android:textStyle="bold"
                 android:textColor="#ee7802"
-                android:textSize="20sp"/>
+                android:textSize="22sp"/>
 
             <TextView
                 android:id="@+id/tv_date"
@@ -128,7 +128,7 @@
                 android:layout_marginTop="20dp"
                 android:text="2025年3月10日"
                 android:textColor="#000000"
-                android:textSize="20sp"/>
+                android:textSize="22sp"/>
 
         </LinearLayout>
 
@@ -153,9 +153,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="20dp"
+                    android:layout_marginLeft="10dp"
                     android:text="请扫码关注公众号"
                     android:textColor="#808080"
-                    android:textSize="16sp"/>
+                    android:textSize="18sp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -163,17 +164,19 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="20dp"
                     android:text="《课程报名》"
+                    android:layout_marginLeft="10dp"
                     android:textColor="#000000"
-                    android:textSize="16sp"/>
+                    android:textSize="18sp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="20dp"
+                    android:layout_marginLeft="10dp"
                     android:text="课程报名 扫码签到"
                     android:textColor="#ee7802"
-                    android:textSize="16sp"/>
+                    android:textSize="18sp"/>
             </LinearLayout>
 
             <ImageView
@@ -183,6 +186,7 @@
                 android:layout_height="100dp"
                 android:layout_gravity="left|center"
                 android:layout_marginRight="20dp"
+                android:scaleType="centerInside"
                 android:src="@mipmap/ic_scan"/>
         </LinearLayout>
     </LinearLayout>
@@ -335,7 +339,7 @@
                 android:layout_width="100dp"
                 android:layout_height="80dp"
                 android:text="扫码签到"
-                android:textSize="20sp"
+                android:textSize="22sp"
                 android:gravity="center"
                 android:textStyle="bold"
                 android:background="#f9ebdc"
@@ -346,7 +350,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="当前课程已签到"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:layout_marginLeft="20dp"
                 android:gravity="center"
                 android:textColor="#000000"/>
@@ -368,7 +372,7 @@
                 android:layout_height="wrap_content"
                 android:text=" 人"
                 android:gravity="center"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:textColor="#000000"/>
 
             <LinearLayout
@@ -385,7 +389,7 @@
                     android:text="请出示课时签到二维码扫码签到"
                     android:layout_marginLeft="40dp"
                     android:gravity="center"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textColor="#000000"/>
 
                 <ImageView

@@ -20,7 +20,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textColor="#ee7802"
-            android:textSize="16dp"
+            android:textSize="18sp"
             android:text="古典文学教室（一）"/>
 
         <TextView
@@ -30,7 +30,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textColor="#808080"
-            android:textSize="16dp"
+            android:textSize="18sp"
             android:text="B楼3层 303"/>
 
         <TextView
@@ -40,7 +40,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textColor="#808080"
-            android:textSize="16dp"
+            android:textSize="18sp"
             android:text="面积：45㎡"/>
 
         <LinearLayout
@@ -55,7 +55,7 @@
                 android:layout_weight="1"
                 android:layout_gravity="center"
                 android:textColor="#808080"
-                android:textSize="16dp"
+                android:textSize="18sp"
                 android:text="正在进行课程"/>
 
             <TextView
@@ -65,7 +65,7 @@
                 android:visibility="gone"
                 android:layout_gravity="center"
                 android:textColor="#ee7802"
-                android:textSize="16dp"
+                android:textSize="18sp"
                 android:text="《古典文学》"/>
 
         </LinearLayout>
@@ -78,7 +78,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textColor="#808080"
-            android:textSize="16dp"
+            android:textSize="18sp"
             android:text="授课教师：姓名"/>
     </LinearLayout>
 

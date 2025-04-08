@@ -29,7 +29,7 @@
             android:layout_weight="1"
             android:text="姓名"
             android:layout_gravity="center"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:padding="8dp"/>
 
         <TextView
@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="学科"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:layout_gravity="center"
             android:padding="8dp"/>
 
@@ -54,7 +54,7 @@
                 android:layout_weight="1"
                 android:text="详情"
                 android:layout_gravity="center"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:padding="8dp"/>
 
             <ImageView

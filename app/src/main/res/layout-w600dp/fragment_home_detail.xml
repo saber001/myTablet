@@ -48,15 +48,15 @@
                     <TextView
                         android:id="@+id/course_title"
                         android:text="《中国古典文学》"
-                        android:textSize="20sp"
+                        android:textSize="22sp"
                         android:textColor="#000000"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textStyle="bold" />
                     <TextView
                         android:id="@+id/quota"
-                        android:textSize="16sp"
-                        android:text="共12课"
+                        android:textSize="18sp"
+                        android:text="共 0 课"
                         android:layout_marginLeft="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -64,8 +64,8 @@
 
                     <TextView
                         android:id="@+id/reg_cnt"
-                        android:text="第几课"
-                        android:textSize="16sp"
+                        android:text="第 课"
+                        android:textSize="18sp"
                         android:layout_marginLeft="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -77,8 +77,8 @@
 
                 <TextView
                     android:id="@+id/course_time"
-                    android:text="上课时间: 2025年03月10日 09:00 - 10:00"
-                    android:textSize="16sp"
+                    android:text="上课时间: "
+                    android:textSize="18sp"
                     android:layout_marginTop="18dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -86,8 +86,8 @@
 
                 <TextView
                     android:id="@+id/course_duration"
-                    android:text="课程时长: 60分钟"
-                    android:textSize="16sp"
+                    android:text="课程时长: "
+                    android:textSize="18sp"
                     android:layout_marginTop="18dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -96,7 +96,7 @@
                 <TextView
                     android:text="课程介绍:"
                     android:textStyle="bold"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="18dp"
@@ -109,7 +109,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="18dp"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textColor="#000000"
                     android:paddingTop="4dp" />
 
@@ -133,7 +133,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:background="@color/white"
-                    android:padding="16dp">
+                    android:padding="18dp">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/teacher_image"
@@ -151,20 +151,20 @@
 
                         <TextView
                             android:id="@+id/teacher_name"
-                            android:text="上课教师: 姓名"
+                            android:text="上课教师: "
                             android:textColor="#808080"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp" />
+                            android:textSize="18sp" />
 
                         <TextView
                             android:id="@+id/teacher_level"
-                            android:text="教师级别: 高级教师"
+                            android:text="教师级别: "
                             android:layout_marginTop="20dp"
                             android:textColor="#808080"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp" />
+                            android:textSize="18sp" />
 
                         <TextView
                             android:text="教师介绍"
@@ -172,18 +172,18 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="40dp"
                             android:textColor="#ee7802"
-                            android:textSize="16sp" />
+                            android:textSize="18sp" />
                     </LinearLayout>
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/teacher_info"
-                    android:text="教师级别: 高级介绍教师高级介绍教师高级介绍教师高级介绍教师高级介绍教师高级介绍教师高级介绍教师"
+                    android:text="教师介绍: 高级介绍教师高级介绍教师高级介绍教师高级介绍教师高级介绍教师高级介绍教师高级介绍教师"
                     android:layout_marginTop="20dp"
                     android:textColor="#000000"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp" />
+                    android:textSize="18sp" />
             </LinearLayout>
         </LinearLayout>
 

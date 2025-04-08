@@ -18,11 +18,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
     private List<DayInfo> dayList;
     private OnItemClickListener onItemClickListener;
     private int selectedPosition = -1; // 记录选中的位置
-
     public CalendarAdapter(List<DayInfo> dayList) {
         this.dayList = dayList;
     }
-
     public interface OnItemClickListener {
         void onItemClick(DayInfo dayInfo);
     }
@@ -51,7 +49,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
             holder.tvCourseCount.setTextColor(Color.WHITE);
             holder.tvDay.setTypeface(null, Typeface.BOLD);
             holder.tvCourseCount.setTypeface(null, Typeface.BOLD);
-            // 选中背景
             holder.itemView.setBackgroundResource(R.drawable.bg_selected_day);
         } else if ("无课".equals(dayInfo.getCourseCount())) {
             // 无课，白色背景，默认字体
@@ -59,7 +56,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
             holder.tvCourseCount.setTextColor(Color.GRAY);
             holder.tvDay.setTypeface(null, Typeface.NORMAL);
             holder.tvCourseCount.setTypeface(null, Typeface.NORMAL);
-
             holder.itemView.setBackgroundResource(R.drawable.bg_no_course_day);
         } else {
             // 有课，淡橙色背景，字体加粗
@@ -67,7 +63,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
             holder.tvCourseCount.setTextColor(Color.BLACK);
             holder.tvDay.setTypeface(null, Typeface.BOLD);
             holder.tvCourseCount.setTypeface(null, Typeface.BOLD);
-
             holder.itemView.setBackgroundResource(R.drawable.bg_has_course_day);
         }
 
@@ -85,10 +80,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
     public int getItemCount() {
         return dayList.size();
     }
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvDay, tvCourseCount;
-
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvDay = itemView.findViewById(R.id.tv_day);

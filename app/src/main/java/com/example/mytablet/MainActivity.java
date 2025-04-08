@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.yx.YxDeviceManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,6 +24,7 @@ import com.example.mytablet.ui.fragment.TeacherIntroFragment;
 import com.example.mytablet.ui.fragment.InstructionFragment;
 import com.example.mytablet.ui.model.BoardInfo;
 import com.example.mytablet.ui.model.Result;
+import com.example.mytablet.ui.model.SignInDialog;
 import com.example.mytablet.ui.model.Utils;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -43,16 +45,19 @@ public class MainActivity extends AppCompatActivity {
     private SerialHelper serialHelper;
     private String userGuide;
     private Handler mainHandler;
+    private Handler heartbeatHandler = new Handler(Looper.getMainLooper());
+    private Runnable heartbeatRunnable;
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         yxDeviceManager = YxDeviceManager.getInstance(this);
+//        ApiClient.setDeviceSerialNumber(yxDeviceManager.getSerialno());
+        ApiClient.setDeviceSerialNumber("bfcc2b9ab3bc770a");  //这个是测试用的数据。
+        apiService = ApiClient.getClient().create(ApiService.class);
 
-        ApiClient.setDeviceSerialNumber(yxDeviceManager.getSerialno());
-//        ApiClient.setDeviceSerialNumber("bfcc2b9ab3bc770a");  //这个是测试用的数据。
         tv_signinCnt = findViewById(R.id.tv_signinCnt);
 
         // 创建 Handler 处理签到次数更新
@@ -70,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         // 打开串口
         if (serialHelper.openSerialPort("/dev/ttyS4", 9600)) {
             // 启动串口数据读取线程
-            serialReaderThread = new SerialReaderThread(serialHelper.getInputStream(),mainHandler);
+            serialReaderThread = new SerialReaderThread(serialHelper.getInputStream(),mainHandler,MainActivity.this);
             serialReaderThread.start();
         } else {
             Utils.showToast("串口打开失败");
@@ -98,19 +103,19 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.ll_course).setOnClickListener(v -> loadInstruction());
 
         fetchBoardInfo();
+        startHeartbeat();
     }
 
     private void loadInstruction(){
         InstructionFragment instructionFragment = new InstructionFragment();
         Bundle bundle = new Bundle();
         bundle.putString("userGuide", userGuide);
+        bundle.putString("serialno",yxDeviceManager.getSerialno());
         instructionFragment.setArguments(bundle);
         loadFragment(instructionFragment);
     }
 
     public void fetchBoardInfo() {
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        // 发起请求
         apiService.getBoardInfo().enqueue(new Callback<Result<BoardInfo>>() {
             @Override
             public void onResponse(Call<Result<BoardInfo>> call, Response<Result<BoardInfo>> response) {
@@ -148,6 +153,36 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void startHeartbeat() {
+        heartbeatRunnable = new Runnable() {
+            @Override
+            public void run() {
+                sendHeartbeat();
+                // 每60秒重复调用
+                heartbeatHandler.postDelayed(this, 60 * 1000);
+            }
+        };
+        heartbeatHandler.post(heartbeatRunnable);
+    }
+
+    private void sendHeartbeat() {
+        apiService.sendHeartbeat().enqueue(new Callback<Result<Void>>() {
+            @Override
+            public void onResponse(Call<Result<Void>> call, Response<Result<Void>> response) {
+                if (response.isSuccessful()) {
+                    Log.d("Heartbeat", "心跳成功");
+                } else {
+                    Log.e("Heartbeat", "心跳失败 HTTP状态码: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Result<Void>> call, Throwable t) {
+                Log.e("Heartbeat", "心跳异常: " + t.getMessage());
+            }
+        });
+    }
+
     private void updateTime() {
         Calendar calendar = Calendar.getInstance();
         // 获取当前时间
@@ -168,14 +203,20 @@ public class MainActivity extends AppCompatActivity {
         handler.postDelayed(this::updateTime, 3600 * 1000);
     }
 
-    private void loadFragment(Fragment fragment) {
+    private void loadFragment(Fragment targetFragment) {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+
+        // 如果当前 fragment 是同类型，就不切换
+        if (currentFragment != null && currentFragment.getClass().equals(targetFragment.getClass())) {
+            return;
+        }
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, fragment);
+        transaction.replace(R.id.fragment_container, targetFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
 
-    private void updateUI() {
+    public void updateUI() {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         if (currentFragment instanceof HomeFragment) {
             ll_top_home.setVisibility(View.VISIBLE);
@@ -196,5 +237,6 @@ public class MainActivity extends AppCompatActivity {
         }
         // 关闭串口
         serialHelper.closeSerialPort();
+        heartbeatHandler.removeCallbacksAndMessages(null); // 停止心跳
     }
 }

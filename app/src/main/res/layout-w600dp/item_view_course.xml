@@ -19,7 +19,7 @@
             android:layout_weight="1"
             android:textColor="#ee7802"
             android:gravity="center"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:text="《古典文学》"/>
 
         <TextView
@@ -30,7 +30,7 @@
             android:gravity="center"
             android:layout_weight="1"
             android:text="课时：6/12"
-            android:textSize="16sp"/>
+            android:textSize="18sp"/>
 
         <TextView android:id="@+id/tv_teacher"
             android:layout_width="0dp"
@@ -39,7 +39,7 @@
             android:gravity="center"
             android:textColor="#808080"
             android:text="授课教师：姓名"
-            android:textSize="16sp"/>
+            android:textSize="18sp"/>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -54,7 +54,7 @@
                 android:textColor="#ea7a09"
                 android:gravity="center"
                 android:text="课程介绍："
-                android:textSize="16sp"/>
+                android:textSize="18sp"/>
 
             <TextView
                 android:id="@+id/tv_description"
@@ -64,7 +64,7 @@
                 android:gravity="center_vertical"
                 android:layout_marginStart="4dp"
                 android:text=""
-                android:textSize="16sp"/>
+                android:textSize="18sp"/>
         </LinearLayout>
 
         <LinearLayout

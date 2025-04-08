@@ -61,7 +61,7 @@ public class AnnouncementView extends LinearLayout {
         handler.removeCallbacks(switchRunnable);
 
         if (notices == null || notices.isEmpty()) {
-            tvCount.setText("0 条公告");
+            tvCount.setText("0");
             tsNotice.setText("暂无公告");
             return;
         }

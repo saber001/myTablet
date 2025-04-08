@@ -1,15 +1,19 @@
 package com.example.mytablet.ui;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.yx.YxDeviceManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.widget.Toast;
 import com.example.mytablet.MyApplication;
 import com.example.mytablet.ui.api.ApiClient;
 import com.example.mytablet.ui.api.ApiService;
 import com.example.mytablet.ui.model.Result;
+import com.example.mytablet.ui.model.SignInDialog;
 import com.example.mytablet.ui.model.SignInResponse;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,14 +21,18 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.mytablet.MyApplication.getContext;
+
 public class SerialReaderThread extends Thread {
     private InputStream inputStream;
     private boolean isRunning = true;
     private Handler mainHandler;
+    private Context context;
 
-    public SerialReaderThread(InputStream inputStream, Handler mainHandler) {
+    public SerialReaderThread(InputStream inputStream, Handler mainHandler, Context context) {
         this.inputStream = inputStream;
-        this.mainHandler = mainHandler; // 直接使用 MainActivity 传入的 Handler
+        this.mainHandler = mainHandler;
+        this.context = context;
     }
 
     @Override
@@ -55,14 +63,16 @@ public class SerialReaderThread extends Thread {
                         if (response.isSuccessful() && response.body() != null) {
                             Result<SignInResponse> result = response.body();
                             if (result.getCode() == 200 && result.getData() != null) {
-                                showToast(result.getData().getUserName()+"签到成功");
+                                SignInDialog dialog = new SignInDialog((Activity)context, result.getData().getUserName() + " 签到成功");
+                                dialog.getWindow().setGravity(Gravity.CENTER); // 设置
+                                dialog.show();
                                 String signinCnt = result.getData().getSigninCnt();  // 获取签到次数
                                 // 通过 Handler 发送签到次数到 MainActivity
                                 Message msg = Message.obtain();
                                 msg.what = 1;
                                 msg.obj = signinCnt;
                                 mainHandler.sendMessage(msg);
-                                MyApplication myApplication = (MyApplication) MyApplication.getContext();
+                                MyApplication myApplication = (MyApplication) getContext();
                                 YxDeviceManager yxDeviceManager = myApplication.yxDeviceManager;
                                 // 开门操作
                                 boolean resultOpen = yxDeviceManager.setGpioDirection(113, 1); // 开门
@@ -96,7 +106,7 @@ public class SerialReaderThread extends Thread {
 
     // 显示 Toast
     private void showToast(String message) {
-        mainHandler.post(() -> Toast.makeText(MyApplication.getContext(), message, Toast.LENGTH_SHORT).show());
+        mainHandler.post(() -> Toast.makeText(context, message, Toast.LENGTH_SHORT).show());
     }
 
     // 停止读取线程

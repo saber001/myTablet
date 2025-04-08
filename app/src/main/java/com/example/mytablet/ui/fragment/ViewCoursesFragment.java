@@ -39,21 +39,21 @@ public class ViewCoursesFragment extends BaseFragment {
     private ViewCoursesAdapter courseAdapter;
     private List<CourseBean> courseList;
     private LinearLayout llSubject;
+    private TextView tvEmpty;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_view_courses, container, false);
         recyclerView = view.findViewById(R.id.recyclerView);
+        tvEmpty = view.findViewById(R.id.tv_empty);
         llSubject = view.findViewById(R.id.ll_subject);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         courseList = new ArrayList<>();
         courseAdapter = new ViewCoursesAdapter(courseList,getActivity());
         recyclerView.setAdapter(courseAdapter);
 
         loadSubjects();
-        // 默认请求文学类课程
         // 获取倒计时 TextView 并启动倒计时
         TextView countdownTextView = view.findViewById(R.id.tv_countdown);
         startCountdown(countdownTextView);
@@ -90,7 +90,6 @@ public class ViewCoursesFragment extends BaseFragment {
 
     private void addButtons(List<SubjectBean> subjects) {
         llSubject.removeAllViews(); // 清除原有按钮
-
         for (int i = 0; i < subjects.size(); i++) {
             SubjectBean subject = subjects.get(i);
             Button button = new Button(getActivity());
@@ -146,20 +145,20 @@ public class ViewCoursesFragment extends BaseFragment {
             public void onResponse(Call<Result<CourseBean>> call, Response<Result<CourseBean>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getCode() == 200) {
                     List<CourseBean> courses = response.body().getRows();  // 从 `rows` 获取数据
-                    if (courses != null) {
+                    if (courses != null && !courses.isEmpty()) {
+                        tvEmpty.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
                         courseList.clear();
                         courseList.addAll(courses);
-                        Log.i("courseAdapter",courseList.size()+"");
                         courseAdapter.notifyDataSetChanged();
                     } else {
-                        Utils.showToast("未找到课程数据");
-                        Toast.makeText(getActivity(), "未找到课程数据", Toast.LENGTH_SHORT).show();
+                        recyclerView.setVisibility(View.GONE);
+                        tvEmpty.setVisibility(View.VISIBLE);
                     }
                 } else {
                     Utils.showToast("获取课程失败");
                 }
             }
-
             @Override
             public void onFailure(Call<Result<CourseBean>> call, Throwable t) {
                 Utils.showToast("网络请求失败"+t.getMessage());

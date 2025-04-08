@@ -26,6 +26,17 @@
             android:background="#ee7802"
             android:textColor="#ffffff"/>
 
+        <TextView
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="暂无课程"
+            android:textSize="20sp"
+            android:textColor="#999999"
+            android:gravity="center"
+            android:visibility="gone"
+            android:layout_marginTop="20dp" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/course_list"
             android:layout_width="match_parent"

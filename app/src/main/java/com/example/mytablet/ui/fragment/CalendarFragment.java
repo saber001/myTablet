@@ -78,17 +78,13 @@ public class CalendarFragment extends BaseFragment {
             }
         });
 
-        // 默认请求文学类课程
         // 获取倒计时 TextView 并启动倒计时
         TextView countdownTextView = view.findViewById(R.id.tv_countdown);
         startCountdown(countdownTextView);
-
         // 监听手动关闭
         LinearLayout btnClose = view.findViewById(R.id.ll_home);
         btnClose.setOnClickListener(v -> navigateToHome());
-
         loadCalendarData();
-
         return view;
     }
 
@@ -123,18 +119,15 @@ public class CalendarFragment extends BaseFragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             today = LocalDate.now();
             todayStr = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            // 获取当前年份和月份
             year = today.getYear();
             month = today.getMonthValue();
-            // 获取该月的天数
             daysInMonth = YearMonth.of(year, month).lengthOfMonth();
         } else {
-            return; // 低版本不支持 LocalDate，直接返回
+            return;
         }
 
         DayInfo todayInfo = null;
         for (int i = 1; i <= daysInMonth; i++) {
-            // 这里动态获取当前月份，而不是写死 2025-03
             String date = String.format("%04d-%02d-%02d", year, month, i);
             List<Course> courses = courseData.getOrDefault(date, new ArrayList<>());
 
@@ -154,44 +147,6 @@ public class CalendarFragment extends BaseFragment {
 
         loadCourseDetailFragment(todayInfo);
     }
-
-//    private void updateCalendar(Map<String, List<Course>> courseData) {
-//        dayList.clear();
-//        LocalDate today = null;
-//        String todayStr = null;
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            today = LocalDate.now();
-//            todayStr = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-//        }
-//        DayInfo todayInfo = null;
-//
-//        for (int i = 1; i <= 31; i++) {
-//            String date = "2025-03-" + String.format("%02d", i);
-//            List<Course> courses = courseData.get(date);
-//
-//            // 这里确保 courses 不是 null
-//            if (courses == null) {
-//                courses = new ArrayList<>();
-//            }
-//
-//            String courseCount = courses.isEmpty() ? "无课" : (courses.size() + "节");
-//            DayInfo dayInfo = new DayInfo(i, courseCount, courses);
-//            dayList.add(dayInfo);
-//
-//            if (date.equals(todayStr)) {
-//                todayInfo = dayInfo;
-//            }
-//        }
-//        adapter.notifyDataSetChanged();
-//
-//        if (todayInfo == null) {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                todayInfo = new DayInfo(LocalDate.now().getDayOfMonth(), "无课", new ArrayList<>()); // 确保 courses 是空列表
-//            }
-//        }
-//        loadCourseDetailFragment(todayInfo);
-//    }
-
 
     private void loadCourseDetailFragment(DayInfo dayInfo) {
         if (getActivity() != null) {

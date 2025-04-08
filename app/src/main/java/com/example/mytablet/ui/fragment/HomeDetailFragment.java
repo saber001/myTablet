@@ -8,8 +8,6 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import com.bumptech.glide.Glide;
 import com.example.mytablet.R;
-import com.example.mytablet.ui.api.ApiClient;
-import com.example.mytablet.ui.api.ApiService;
 import com.example.mytablet.ui.model.AnnouncementView;
 import com.example.mytablet.ui.model.HomeDetail;
 import com.example.mytablet.ui.model.Notice;
@@ -34,9 +32,19 @@ public class HomeDetailFragment extends BaseFragment {
         HomeDetailFragment fragment = new HomeDetailFragment();
         Bundle args = new Bundle();
         args.putString(ARG_COURSE_ID, courseId);
+        args.putBoolean("is_static", false); // 默认加载网络数据
         fragment.setArguments(args);
         return fragment;
     }
+
+    public static HomeDetailFragment newStaticInstance() {
+        HomeDetailFragment fragment = new HomeDetailFragment();
+        Bundle args = new Bundle();
+        args.putBoolean("is_static", true); // 静态模式，不加载接口
+        fragment.setArguments(args);
+        return fragment;
+    }
+
 
     @Nullable
     @Override
@@ -54,11 +62,15 @@ public class HomeDetailFragment extends BaseFragment {
         quota = view.findViewById(R.id.quota);
         regCnt = view.findViewById(R.id.reg_cnt);
         announcementView = view.findViewById(R.id.announce);
+
         if (getArguments() != null) {
             courseId = getArguments().getString(ARG_COURSE_ID);
+            boolean isStatic = getArguments().getBoolean("is_static", false);
+            if (!isStatic && courseId != null) {
+                loadCourseDetail(courseId);
+                loadNotice();
+            }
         }
-        loadCourseDetail(courseId);
-        loadNotice();
         return view;
     }
 
@@ -90,17 +102,8 @@ public class HomeDetailFragment extends BaseFragment {
         course_title.setText("《"+homeDetail.getCourse().getName()+"》");
         quota.setText("共"+homeDetail.getCourse().getQuota()+"课");
         regCnt.setText("第"+homeDetail.getCourse().getClassFinishCnt()+"课");
-       course_time.setText(Utils.formatTimeRange(homeDetail.getCourse().getRegStartTime(),homeDetail.getCourse().getRegEndTime()));
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//        // 解析时间
-//        LocalDateTime startTime = LocalDateTime.parse(homeDetail.getCourse().getRegStartTime(), formatter);
-//        LocalDateTime endTime = LocalDateTime.parse(homeDetail.getCourse().getRegEndTime(), formatter);
-//        // 计算时间间隔
-//        Duration duration = Duration.between(startTime, endTime);
-//        // 获取总分钟数或小时数
-//        long minutes = duration.toMinutes() % 60;
+        course_time.setText(Utils.formatTimeRange(homeDetail.getCourse().getRegStartTime(),homeDetail.getCourse().getRegEndTime()));
         course_duration.setText("课程时长："+60+"分钟");
-
         course_description.setText(homeDetail.getCourse().getInfo());
         teacher_name.setText("上课教师："+homeDetail.getUser().getUserName());
         teacher_level.setText("教师级别："+ Utils.getLevelText(homeDetail.getUser().getLevel()));
