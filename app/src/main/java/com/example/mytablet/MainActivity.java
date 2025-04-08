@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
             if (msg.what == 1) { // 识别签到次数的消息
                 String signinCnt = (String) msg.obj;
                 tv_signinCnt.setText(signinCnt);
-                Log.i("sssssssss",tv_signinCnt.toString());
             }
             return true;
         });

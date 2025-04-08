@@ -13,23 +13,28 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-//        ndk {
-//            abiFilters "armeabi-v7a", "x86","armeabi"  // 确保 ABI 兼容
-//        }
         multiDexEnabled true  // 启用 MultiDex
     }
     viewBinding {
         enabled = true
     }
+
+    signingConfigs {
+        keys {
+            keyAlias 'android.keystore'
+            keyPassword '96515.cc*.*qstech'
+            storeFile file('D:\\Android/Android/android.keystore')
+            storePassword '96515.cc*.*qstech'
+        }
+    }
     buildTypes {
         release {
-            //在这里添加：
-            lintOptions {
-                checkReleaseBuilds false
-                abortOnError false
-            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.keys
+        }
+        debug {
+            signingConfig signingConfigs.keys
         }
     }
 

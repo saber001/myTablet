@@ -30,7 +30,7 @@ public class InstructionFragment extends BaseFragment {
         // 获取传递的数据
         if (getArguments() != null) {
             userGuide = getArguments().getString("userGuide", ""); // 取值，避免 null
-            getSerialno = getArguments().getString("getSerialno","");
+            getSerialno = getArguments().getString("serialno","");
         }
         imageView = view.findViewById(R.id.image);
         tv_serial = view.findViewById(R.id.tv_serial);
