@@ -28,27 +28,35 @@
                 android:textSize="24sp"
                 android:textColor="@color/white"/>
 
-            <LinearLayout
-                android:id="@+id/ll_subject"
-                android:layout_width="wrap_content"
+            <HorizontalScrollView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <Button
-                    android:id="@+id/btn_literature"
-                    android:layout_width="100dp"
-                    android:layout_height="60dp"
-                    android:layout_marginLeft="20dp"
-                    android:background="@color/white"
-                    android:text="文学类"/>
+                android:fillViewport="true"
+                android:layout_marginRight="10dp"
+                android:scrollbars="none">
 
-                <Button
-                    android:id="@+id/btn_photography"
-                    android:layout_width="100dp"
-                    android:layout_height="60dp"
-                    android:layout_marginLeft="20dp"
-                    android:background="#f3cda6"
-                    android:text="摄影类"/>
-            </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_subject"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/btn_literature"
+                        android:layout_width="100dp"
+                        android:layout_height="60dp"
+                        android:layout_marginLeft="20dp"
+                        android:background="@color/white"
+                        android:text="文学类"/>
+
+                    <Button
+                        android:id="@+id/btn_photography"
+                        android:layout_width="100dp"
+                        android:layout_height="60dp"
+                        android:layout_marginLeft="20dp"
+                        android:background="#f3cda6"
+                        android:text="摄影类"/>
+                </LinearLayout>
+            </HorizontalScrollView>
         </LinearLayout>
 
         <LinearLayout

@@ -20,17 +20,17 @@ import java.util.Locale;
 
 public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
 
-    private ArrayList<HomeBean> courseList;
-    private OnCourseClickListener onCourseClickListener;
+    private ArrayList<HomeBean> homeList;
+    private OnHomeClickListener onHomeClickListener;
     private int selectedPosition = -1; // 记录选中的项，-1 表示未选中
 
-    public interface OnCourseClickListener {
+    public interface OnHomeClickListener {
         void onCourseClick(HomeBean course);
     }
 
-    public HomeAdapter(ArrayList<HomeBean> courseList, OnCourseClickListener listener) {
-        this.courseList = courseList;
-        this.onCourseClickListener = listener;
+    public HomeAdapter(ArrayList<HomeBean> homeList, OnHomeClickListener listener) {
+        this.homeList = homeList;
+        this.onHomeClickListener = listener;
     }
 
     @NonNull
@@ -43,13 +43,13 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
     @SuppressLint("RecyclerView")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        HomeBean course = courseList.get(position);
+        HomeBean homeBean = homeList.get(position);
         // 确保数据正常绑定
-        Log.d("HomeAdapter", "绑定数据: " + course.getCourseName() + " 位置：" + position);
+        Log.d("HomeAdapter", "绑定数据: " + homeBean.getCourseName() + " 位置：" + position);
 
-        formatAndSetTime(course.getBeginTime(), course.getEndTime(), holder.courseTime);
-        holder.courseName.setText("《"+course.getCourseName()+"》");
-        holder.courseNum.setText(course.getClazzName());
+        formatAndSetTime(homeBean.getBeginTime(), homeBean.getEndTime(), holder.courseTime);
+        holder.courseName.setText("《"+homeBean.getCourseName()+"》");
+        holder.courseNum.setText(homeBean.getClazzName());
 
         // 选中状态
         if (position == selectedPosition) {
@@ -72,16 +72,16 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
             notifyItemChanged(previousSelected);
             notifyItemChanged(selectedPosition);
 
-            if (onCourseClickListener != null) {
-                onCourseClickListener.onCourseClick(course);
+            if (onHomeClickListener != null) {
+                onHomeClickListener.onCourseClick(homeBean);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        Log.d("HomeAdapter", "当前 Adapter 数据大小：" + courseList.size());
-        return courseList.size();
+        Log.d("HomeAdapter", "当前 Adapter 数据大小：" + homeList.size());
+        return homeList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

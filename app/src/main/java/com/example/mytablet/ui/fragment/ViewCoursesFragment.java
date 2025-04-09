@@ -1,33 +1,24 @@
 package com.example.mytablet.ui.fragment;
 
-import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.mytablet.MainActivity;
 import com.example.mytablet.R;
 import com.example.mytablet.ui.adapter.ViewCoursesAdapter;
 import com.example.mytablet.ui.model.CourseBean;
 import com.example.mytablet.ui.model.Result;
 import com.example.mytablet.ui.model.SubjectBean;
 import com.example.mytablet.ui.model.Utils;
-import com.example.mytablet.ui.model.ViewCourses;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import io.reactivex.annotations.NonNull;
 import retrofit2.Call;
 import retrofit2.Callback;

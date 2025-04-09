@@ -360,7 +360,7 @@
                 android:id="@+id/tv_signinCnt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" 0"
+                android:text=" "
                 android:textSize="26sp"
                 android:gravity="center"
                 android:textStyle="bold"
