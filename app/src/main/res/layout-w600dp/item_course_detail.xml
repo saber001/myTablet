@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="10dp"
-        android:text="课时名称：课时 6"
+        android:text="课时名称："
         android:textColor="#000000"
         android:textSize="18sp"
         android:textStyle="bold"/>
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="30dp"
-        android:text="上课时间：2025-03-11  09:30-10:30"
+        android:text="上课时间："
         android:textColor="#808080"
         android:textSize="18sp"
         android:textStyle="bold"/>
@@ -38,7 +38,7 @@
             android:id="@+id/teacherName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="上课教师：姓名"
+            android:text="上课教师："
             android:textColor="#808080"
             android:textSize="18sp"
             android:textStyle="bold"/>
@@ -48,7 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="40dp"
-            android:text="上课教室：古典文学教室（一）"
+            android:text="上课教室："
             android:textColor="#808080"
             android:textSize="18sp"
             android:textStyle="bold"/>

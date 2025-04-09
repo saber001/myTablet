@@ -94,18 +94,13 @@ public class HomeFragment extends Fragment {
             public void onResponse(Call<Result<List<HomeBean>>> call, Response<Result<List<HomeBean>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Result<List<HomeBean>> result = response.body();
-                    result.setData(new ArrayList<>());
                     if (result.getCode() == 200 && result.getData() != null) {
                         homeBeans.clear();
                         homeBeans.addAll(result.getData());
                         courseAdapter.notifyDataSetChanged();
-
                         boolean hasData = !homeBeans.isEmpty();
                         courseList.setVisibility(hasData ? View.VISIBLE : View.GONE);
                         emptyView.setVisibility(hasData ? View.GONE : View.VISIBLE);
-
-                        Log.d("fetchTodayClasses", "课程数据加载成功，共 " + homeBeans.size() + " 条");
-
                         if (!homeBeans.isEmpty()) {
                             loadCourseDetailFragment(homeBeans.get(0));
                         } else {

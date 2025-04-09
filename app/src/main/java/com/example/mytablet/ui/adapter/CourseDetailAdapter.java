@@ -38,7 +38,6 @@ public class CourseDetailAdapter extends RecyclerView.Adapter<CourseDetailAdapte
     public int getItemCount() {
         return courseList.size();
     }
-
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView clazzName, clazzDate, teacherName, roomName;
         public ViewHolder(@NonNull View itemView) {

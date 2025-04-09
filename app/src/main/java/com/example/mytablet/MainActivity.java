@@ -24,7 +24,6 @@ import com.example.mytablet.ui.fragment.TeacherIntroFragment;
 import com.example.mytablet.ui.fragment.InstructionFragment;
 import com.example.mytablet.ui.model.BoardInfo;
 import com.example.mytablet.ui.model.Result;
-import com.example.mytablet.ui.model.SignInDialog;
 import com.example.mytablet.ui.model.Utils;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -32,54 +31,51 @@ import java.util.Locale;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
 public class MainActivity extends AppCompatActivity {
 
-    private ImageView logo,img_scan;
-    private TextView tvName;
-    private LinearLayout ll_top_home,ll_scan;
-    private TextView tvTime, tvWeek, tvDate,unit_name,name_eng,tv_signinCnt;
+    private ImageView logo, img_scan;
+    private TextView tvName, tvTime, tvWeek, tvDate, unit_name, name_eng, tv_signinCnt;
+    private LinearLayout ll_top_home, ll_scan;
     private Handler handler = new Handler();
+    private Handler mainHandler;
+    private Handler heartbeatHandler = new Handler(Looper.getMainLooper());
     private YxDeviceManager yxDeviceManager;
     private SerialReaderThread serialReaderThread;
     private SerialHelper serialHelper;
-    private String userGuide;
-    private Handler mainHandler;
-    private Handler heartbeatHandler = new Handler(Looper.getMainLooper());
-    private Runnable heartbeatRunnable;
     private ApiService apiService;
+    private String userGuide;
+    private Runnable heartbeatRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        initDeviceManager();
+        initApiService();
+        initViews();
+        initHandlers();
+        initSerialPort();
+        initClickListeners();
+
+        loadFragment(new HomeFragment());
+        updateTime();
+        fetchBoardInfo();
+        startHeartbeat();
+    }
+
+    private void initDeviceManager() {
         yxDeviceManager = YxDeviceManager.getInstance(this);
 //        ApiClient.setDeviceSerialNumber(yxDeviceManager.getSerialno());
-        ApiClient.setDeviceSerialNumber("bfcc2b9ab3bc770a");  //这个是测试用的数据。
+        ApiClient.setDeviceSerialNumber("bfcc2b9ab3bc770a");  // 测试数据
+    }
+
+    private void initApiService() {
         apiService = ApiClient.getClient().create(ApiService.class);
+    }
 
+    private void initViews() {
         tv_signinCnt = findViewById(R.id.tv_signinCnt);
-
-        // 创建 Handler 处理签到次数更新
-        mainHandler = new Handler(Looper.getMainLooper(), msg -> {
-            if (msg.what == 1) { // 识别签到次数的消息
-                String signinCnt = (String) msg.obj;
-                tv_signinCnt.setText(signinCnt);
-            }
-            return true;
-        });
-
-        // 初始化 SerialHelper
-        serialHelper = new SerialHelper();
-        // 打开串口
-        if (serialHelper.openSerialPort("/dev/ttyS4", 9600)) {
-            // 启动串口数据读取线程
-            serialReaderThread = new SerialReaderThread(serialHelper.getInputStream(),mainHandler,MainActivity.this);
-            serialReaderThread.start();
-        } else {
-            Utils.showToast("串口打开失败");
-        }
-
         tvName = findViewById(R.id.tv_home);
         ll_scan = findViewById(R.id.ll_scan);
         ll_top_home = findViewById(R.id.ll_top_home);
@@ -90,28 +86,71 @@ public class MainActivity extends AppCompatActivity {
         tvWeek = findViewById(R.id.tv_week);
         tvDate = findViewById(R.id.tv_date);
         img_scan = findViewById(R.id.img_scan);
+    }
 
-        updateTime();
-        // 初始加载 HomeFragment
-        loadFragment(new HomeFragment());
-        // 监听 Fragment 切换
-        getSupportFragmentManager().addOnBackStackChangedListener(() -> updateUI());
+    private void initHandlers() {
+        mainHandler = new Handler(Looper.getMainLooper(), msg -> {
+            if (msg.what == 1) {
+                tv_signinCnt.setText((String) msg.obj);
+            }
+            return true;
+        });
+        getSupportFragmentManager().addOnBackStackChangedListener(this::updateUI);
+    }
+
+    private void initSerialPort() {
+        serialHelper = new SerialHelper();
+        if (serialHelper.openSerialPort("/dev/ttyS4", 9600)) {
+            serialReaderThread = new SerialReaderThread(serialHelper.getInputStream(), mainHandler, this);
+            serialReaderThread.start();
+        } else {
+            Utils.showToast("串口打开失败");
+        }
+    }
+
+    private void initClickListeners() {
         findViewById(R.id.ll_home).setOnClickListener(v -> loadFragment(new ClassroomFragment()));
         findViewById(R.id.ll_location).setOnClickListener(v -> loadFragment(new TeacherIntroFragment()));
         findViewById(R.id.ll_teacher).setOnClickListener(v -> loadFragment(new ViewCoursesFragment()));
         findViewById(R.id.ll_course).setOnClickListener(v -> loadInstruction());
-
-        fetchBoardInfo();
-        startHeartbeat();
     }
 
-    private void loadInstruction(){
+    private void loadInstruction() {
         InstructionFragment instructionFragment = new InstructionFragment();
         Bundle bundle = new Bundle();
         bundle.putString("userGuide", userGuide);
-        bundle.putString("serialno",yxDeviceManager.getSerialno());
+        bundle.putString("serialno", yxDeviceManager.getSerialno());
         instructionFragment.setArguments(bundle);
         loadFragment(instructionFragment);
+    }
+
+    private void loadFragment(Fragment fragment) {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (currentFragment != null && currentFragment.getClass().equals(fragment.getClass())) return;
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    public void updateUI() {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        boolean isHome = currentFragment instanceof HomeFragment;
+        ll_top_home.setVisibility(isHome ? View.VISIBLE : View.GONE);
+        ll_scan.setVisibility(isHome ? View.VISIBLE : View.GONE);
+    }
+
+    private void updateTime() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.CHINA);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年M月d日", Locale.CHINA);
+        String[] weeks = {"星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
+        tvTime.setText(timeFormat.format(calendar.getTime()));
+        tvDate.setText(dateFormat.format(calendar.getTime()));
+        tvWeek.setText(weeks[calendar.get(Calendar.DAY_OF_WEEK) - 1]);
+        handler.postDelayed(this::updateTime, 3600 * 1000);
     }
 
     public void fetchBoardInfo() {
@@ -125,41 +164,29 @@ public class MainActivity extends AppCompatActivity {
                         tvName.setText(boardInfo.room.roomName);
                         unit_name.setText(boardInfo.siteInfo.unit);
                         name_eng.setText(Utils.convertToPinyin(boardInfo.siteInfo.unit));
-                        Glide.with(MainActivity.this)
-                                .load(boardInfo.siteInfo.logoUrl)
-                                .into(logo);
-                        Glide.with(MainActivity.this)
-                                .load(boardInfo.siteInfo.qrCodeUrl)
-                                .into(img_scan);
+                        Glide.with(MainActivity.this).load(boardInfo.siteInfo.logoUrl).into(logo);
+                        Glide.with(MainActivity.this).load(boardInfo.siteInfo.qrCodeUrl).into(img_scan);
                         userGuide = boardInfo.siteInfo.userGuideUrl;
-                        System.out.println("✅ 单位名称：" + boardInfo.siteInfo.unit);
-                        if (boardInfo.room != null) {
-                            System.out.println("✅ 教室名称：" + boardInfo.room.roomName);
-                        }
                     } else {
-                        Utils.showToast("网络请求失败"+result.getMsg());
+                        Utils.showToast("网络请求失败" + result.getMsg());
                     }
                 } else {
-                    Utils.showToast("服务器错误"+response.code());
+                    Utils.showToast("服务器错误" + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<Result<BoardInfo>> call, Throwable t) {
-                Utils.showToast("网络请求失败"+t.getMessage());
+                Utils.showToast("网络请求失败" + t.getMessage());
                 t.printStackTrace();
             }
         });
     }
 
     private void startHeartbeat() {
-        heartbeatRunnable = new Runnable() {
-            @Override
-            public void run() {
-                sendHeartbeat();
-                // 每60秒重复调用
-                heartbeatHandler.postDelayed(this, 60 * 1000);
-            }
+        heartbeatRunnable = () -> {
+            sendHeartbeat();
+            heartbeatHandler.postDelayed(heartbeatRunnable, 60 * 1000);
         };
         heartbeatHandler.post(heartbeatRunnable);
     }
@@ -182,60 +209,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void updateTime() {
-        Calendar calendar = Calendar.getInstance();
-        // 获取当前时间
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.CHINA);
-        String time = timeFormat.format(calendar.getTime());
-        // 获取当前日期
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年M月d日", Locale.CHINA);
-        String date = dateFormat.format(calendar.getTime());
-        // 获取星期几
-        String[] weeks = {"星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
-        int weekIndex = calendar.get(Calendar.DAY_OF_WEEK) - 1;
-        String week = weeks[weekIndex];
-        // 设置文本
-        tvTime.setText(time);
-        tvDate.setText(date);
-        tvWeek.setText(week);
-        // 每小时更新一次时间
-        handler.postDelayed(this::updateTime, 3600 * 1000);
-    }
-
-    private void loadFragment(Fragment targetFragment) {
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-
-        // 如果当前 fragment 是同类型，就不切换
-        if (currentFragment != null && currentFragment.getClass().equals(targetFragment.getClass())) {
-            return;
-        }
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, targetFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
-
-    public void updateUI() {
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (currentFragment instanceof HomeFragment) {
-            ll_top_home.setVisibility(View.VISIBLE);
-            ll_scan.setVisibility(View.VISIBLE);
-        } else {
-            ll_top_home.setVisibility(View.GONE);
-            ll_scan.setVisibility(View.GONE);
-        }
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         handler.removeCallbacksAndMessages(null);
-        // 停止串口数据读取线程
+        heartbeatHandler.removeCallbacksAndMessages(null);
         if (serialReaderThread != null) {
             serialReaderThread.stopReading();
         }
-        // 关闭串口
         serialHelper.closeSerialPort();
-        heartbeatHandler.removeCallbacksAndMessages(null); // 停止心跳
     }
 }

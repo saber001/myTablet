@@ -20,5 +20,5 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>  <!-- 默认隐藏，数据加载后显示 -->
+        android:visibility="visible"/>  <!-- 默认隐藏，数据加载后显示 -->
 </LinearLayout>

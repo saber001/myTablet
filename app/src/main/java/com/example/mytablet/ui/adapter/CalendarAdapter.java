@@ -17,16 +17,37 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
 
     private List<DayInfo> dayList;
     private OnItemClickListener onItemClickListener;
-    private int selectedPosition = -1; // 记录选中的位置
+    private int selectedPosition = -1;
+
     public CalendarAdapter(List<DayInfo> dayList) {
         this.dayList = dayList;
     }
+
     public interface OnItemClickListener {
         void onItemClick(DayInfo dayInfo);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.onItemClickListener = listener;
+    }
+
+    public void setSelectedPosition(int position) {
+        selectedPosition = position;
+        notifyDataSetChanged();
+    }
+
+    public void setSelectedDate(int day) {
+        for (int i = 0; i < dayList.size(); i++) {
+            if (dayList.get(i).getDay() == day) {
+                selectedPosition = i;
+                notifyDataSetChanged();
+                break;
+            }
+        }
+    }
+
+    public int getSelectedPosition() {
+        return selectedPosition;
     }
 
     @NonNull
@@ -42,23 +63,19 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
         holder.tvDay.setText(String.valueOf(dayInfo.getDay()));
         holder.tvCourseCount.setText(dayInfo.getCourseCount());
 
-        // 设置不同的背景颜色和字体样式
         if (position == selectedPosition) {
-            // 选中的日期，字体变成白色，加粗
             holder.tvDay.setTextColor(Color.WHITE);
             holder.tvCourseCount.setTextColor(Color.WHITE);
             holder.tvDay.setTypeface(null, Typeface.BOLD);
             holder.tvCourseCount.setTypeface(null, Typeface.BOLD);
             holder.itemView.setBackgroundResource(R.drawable.bg_selected_day);
         } else if ("无课".equals(dayInfo.getCourseCount())) {
-            // 无课，白色背景，默认字体
             holder.tvDay.setTextColor(Color.BLACK);
             holder.tvCourseCount.setTextColor(Color.GRAY);
             holder.tvDay.setTypeface(null, Typeface.NORMAL);
             holder.tvCourseCount.setTypeface(null, Typeface.NORMAL);
             holder.itemView.setBackgroundResource(R.drawable.bg_no_course_day);
         } else {
-            // 有课，淡橙色背景，字体加粗
             holder.tvDay.setTextColor(Color.BLACK);
             holder.tvCourseCount.setTextColor(Color.BLACK);
             holder.tvDay.setTypeface(null, Typeface.BOLD);
@@ -66,10 +83,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
             holder.itemView.setBackgroundResource(R.drawable.bg_has_course_day);
         }
 
-        // 点击事件
         holder.itemView.setOnClickListener(v -> {
             if (onItemClickListener != null) {
-                selectedPosition = position;  // 更新选中状态
+                selectedPosition = position;
                 notifyDataSetChanged();
                 onItemClickListener.onItemClick(dayInfo);
             }
@@ -80,6 +96,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
     public int getItemCount() {
         return dayList.size();
     }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvDay, tvCourseCount;
         public ViewHolder(@NonNull View itemView) {
@@ -89,5 +106,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
         }
     }
 }
+
 
 

@@ -73,11 +73,14 @@ public class CalendarFragment extends BaseFragment {
 
         // 监听日历点击事件
         adapter.setOnItemClickListener(dayInfo -> {
-            if (!"无课".equals(dayInfo.getCourseCount())) {
-                loadCourseDetailFragment(dayInfo);
+            if ("无课".equals(dayInfo.getCourseCount())) {
+                dayInfo.setToday(true);        // 当前日期标记（可选）
+                dayInfo.setEmptyDay(true);     // 标记为无课
+            } else {
+                dayInfo.setEmptyDay(false);    // 清除无课标记
             }
+            loadCourseDetailFragment(dayInfo);
         });
-
         // 获取倒计时 TextView 并启动倒计时
         TextView countdownTextView = view.findViewById(R.id.tv_countdown);
         startCountdown(countdownTextView);
@@ -126,6 +129,7 @@ public class CalendarFragment extends BaseFragment {
             return;
         }
 
+        int todayIndex = -1;
         DayInfo todayInfo = null;
         for (int i = 1; i <= daysInMonth; i++) {
             String date = String.format("%04d-%02d-%02d", year, month, i);
@@ -134,24 +138,28 @@ public class CalendarFragment extends BaseFragment {
             String courseCount = courses.isEmpty() ? "无课" : (courses.size() + "节");
             DayInfo dayInfo = new DayInfo(i, courseCount, courses);
             dayList.add(dayInfo);
-            Log.d("CalendarDebug", "加载日期: " + date + ", 课程数量: " + courses.size());
             if (date.equals(todayStr)) {
+                todayIndex = i - 1;
                 todayInfo = dayInfo;
             }
         }
         adapter.notifyDataSetChanged();
-
+        if (todayIndex != -1) {
+            adapter.setSelectedPosition(todayIndex);
+            recyclerView.scrollToPosition(todayIndex);
+        }
         if (todayInfo == null) {
             todayInfo = new DayInfo(today.getDayOfMonth(), "无课", new ArrayList<>());
+            todayInfo.setToday(true);
+            todayInfo.setEmptyDay(true); // 标记为“默认无课”
         }
-
         loadCourseDetailFragment(todayInfo);
     }
 
     private void loadCourseDetailFragment(DayInfo dayInfo) {
         if (getActivity() != null) {
             getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.detail_container, CourseDetailFragment.newInstance(dayInfo.getCourses()))
+                    .replace(R.id.detail_container, CourseDetailFragment.newInstance(dayInfo))
                     .commit();
         }
     }
