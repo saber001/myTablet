@@ -37,20 +37,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
         notifyDataSetChanged();
     }
 
-    public void setSelectedDate(int day) {
-        for (int i = 0; i < dayList.size(); i++) {
-            if (dayList.get(i).getDay() == day) {
-                selectedPosition = i;
-                notifyDataSetChanged();
-                break;
-            }
-        }
-    }
-
-    public int getSelectedPosition() {
-        return selectedPosition;
-    }
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

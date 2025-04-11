@@ -7,6 +7,7 @@ import java.io.Serializable;
 public class HomeDetail implements Serializable {
     private CourseBean course;
     private UserBean user;
+
     public CourseBean getCourse() { return course; }
     public UserBean getUser() { return user; }
 

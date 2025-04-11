@@ -34,6 +34,9 @@ import retrofit2.Response;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 
 public class CalendarFragment extends BaseFragment {
 
@@ -41,7 +44,7 @@ public class CalendarFragment extends BaseFragment {
     private CalendarAdapter adapter;
     private List<DayInfo> dayList = new ArrayList<>();
     private String courseId,courseName,currentMonth;
-    private TextView tv_name,tv_date;
+    private TextView tv_name,tv_date,tv_empty;
 
     @Nullable
     @Override
@@ -58,6 +61,7 @@ public class CalendarFragment extends BaseFragment {
         currentMonth = sdf.format(new Date());  // 获取当前月份
         tv_date = view.findViewById(R.id.tv_date);
         tv_date.setText(currentMonth);
+        tv_empty = view.findViewById(R.id.tv_empty);
 
         StringBuilder verticalText = new StringBuilder();
         for (char c : courseName.toCharArray()) {
@@ -100,8 +104,11 @@ public class CalendarFragment extends BaseFragment {
                     Result<Map<String, List<Course>>> result = response.body();
                     if (result.getCode() == 200 && result.getData() != null) {
                         updateCalendar(result.getData());
+                        tv_empty.setVisibility(GONE);
+                        recyclerView.setVisibility(VISIBLE);
                     } else {
-                        Utils.showToast("错误代码: " + result.getCode() + ", 错误信息: " + result.getMsg());
+                        tv_empty.setVisibility(VISIBLE);
+                        recyclerView.setVisibility(GONE);
                     }
                 } else {
                     Utils.showToast("请求失败: " + response.message());

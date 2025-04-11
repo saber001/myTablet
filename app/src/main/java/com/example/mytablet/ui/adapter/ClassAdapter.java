@@ -47,7 +47,6 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.CourseViewHo
          roomName = itemView.findViewById(R.id.room_name);
          area = itemView.findViewById(R.id.area);
          address = itemView.findViewById(R.id.address);
-         text5 = itemView.findViewById(R.id.text5);
       }
    }
 }

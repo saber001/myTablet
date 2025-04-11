@@ -29,7 +29,7 @@ public class SignInDialog extends Dialog {
       setContentView(view);
       setContentView(view);
 
-// 设置宽高：让 dialog 显示为 300dp × 150dp
+   // 设置宽高：让 dialog 显示为 300dp × 150dp
       Window window = getWindow();
       if (window != null) {
          WindowManager.LayoutParams params = window.getAttributes();

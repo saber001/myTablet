@@ -16,7 +16,6 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="#ee7802"
-            android:text="教\n师\n介\n绍"
             android:gravity="center"
             android:textSize="24sp"
             android:textColor="@color/white"
@@ -186,13 +185,27 @@
                     android:layout_height="1dp"
                     android:background="#ff8d1a"/>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView"
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:background="@color/white"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1">
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"/>
+
+                    <TextView
+                        android:id="@+id/tv_empty"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="当前月份暂无课程"
+                        android:textSize="20sp"
+                        android:textColor="#ff8d1a"
+                        android:gravity="center"
+                        android:visibility="gone"/>
+                </FrameLayout>
             </LinearLayout>
             <View
                 android:layout_width="1dp"

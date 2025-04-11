@@ -95,9 +95,7 @@ public class AnnouncementView extends LinearLayout {
             handler.postDelayed(this, 10000); // 10秒后切换
         }
     };
-    public void stopScrolling() {
-        handler.removeCallbacks(switchRunnable);
-    }
+
 }
 
 

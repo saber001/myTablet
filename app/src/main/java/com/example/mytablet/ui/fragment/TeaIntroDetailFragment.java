@@ -84,7 +84,7 @@ public class TeaIntroDetailFragment extends BaseFragment {
                for (String subject : subjects) {
                   Button button = new Button(getActivity());
                   LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                          dpToPx(100), dpToPx(40)); // 设置宽高
+                          dpToPx(110), dpToPx(50)); // 设置宽高
                   params.setMargins(dpToPx(10), 0, 0, 0); // 设置间距
                   button.setLayoutParams(params);
                   button.setText(subject);

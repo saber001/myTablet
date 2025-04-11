@@ -1,5 +1,6 @@
 package com.example.mytablet;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,7 +28,10 @@ import com.example.mytablet.ui.model.Result;
 import com.example.mytablet.ui.model.Utils;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -45,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private ApiService apiService;
     private String userGuide;
     private Runnable heartbeatRunnable;
+    private final Map<String, Fragment> fragmentMap = new HashMap<>();
+    private Fragment currentFragment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
             }
             return true;
         });
-        getSupportFragmentManager().addOnBackStackChangedListener(this::updateUI);
     }
 
     private void initSerialPort() {
@@ -125,22 +130,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadFragment(Fragment fragment) {
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (currentFragment != null && currentFragment.getClass().equals(fragment.getClass())) return;
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null)
-                .commit();
+        String tag = fragment.getClass().getSimpleName();
+        Fragment targetFragment = fragmentMap.get(tag);
+        // 隐藏当前 Fragment
+        if (currentFragment != null) {
+            transaction.hide(currentFragment);
+        }
+        if (targetFragment == null) {
+            // 没有缓存过，添加
+            targetFragment = fragment;
+            fragmentMap.put(tag, targetFragment);
+            transaction.add(R.id.fragment_container, targetFragment, tag);
+        } else {
+            // 显示已缓存的 Fragment
+            transaction.show(targetFragment);
+        }
+        currentFragment = targetFragment;
+        transaction.commitAllowingStateLoss(); // 防止状态丢失崩溃
+        // ✅ 在这里主动调用 updateUI()
+        updateUI(currentFragment);
     }
 
-    public void updateUI() {
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        boolean isHome = currentFragment instanceof HomeFragment;
+    private void updateUI(Fragment fragment) {
+        boolean isHome = fragment instanceof HomeFragment;
         ll_top_home.setVisibility(isHome ? View.VISIBLE : View.GONE);
         ll_scan.setVisibility(isHome ? View.VISIBLE : View.GONE);
     }
+
 
     private void updateTime() {
         Calendar calendar = Calendar.getInstance();
@@ -186,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
     private void startHeartbeat() {
         heartbeatRunnable = () -> {
             sendHeartbeat();
-            heartbeatHandler.postDelayed(heartbeatRunnable, 60 * 1000);
+            heartbeatHandler.postDelayed(heartbeatRunnable, 120 * 1000);
         };
         heartbeatHandler.post(heartbeatRunnable);
     }

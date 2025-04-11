@@ -15,7 +15,6 @@ public class Course implements Serializable {
     // Getters and Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
-
     public String getClazzName() { return clazzName; }
     public void setClazzName(String clazzName) { this.clazzName = clazzName; }
 

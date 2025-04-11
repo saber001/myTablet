@@ -20,7 +20,7 @@ public class TeacherIntroAdapter extends RecyclerView.Adapter<TeacherIntroAdapte
 
     private List<TeacherIntro> personList;
     private OnItemClickListener listener;
-    private int selectedPosition = -1; // 记录选中的位置
+    private int selectedPosition = -1;
 
     public interface OnItemClickListener {
         void onItemClick(TeacherIntro person);
@@ -38,7 +38,6 @@ public class TeacherIntroAdapter extends RecyclerView.Adapter<TeacherIntroAdapte
         return new PersonViewHolder(view);
     }
 
-    @SuppressLint("RecyclerView")
     @Override
     public void onBindViewHolder(@NonNull PersonViewHolder holder, int position) {
         TeacherIntro person = personList.get(position);
@@ -50,26 +49,28 @@ public class TeacherIntroAdapter extends RecyclerView.Adapter<TeacherIntroAdapte
                 .load(person.getPhotoUrl())
                 .into(holder.circleImageView);
 
-        // 处理选中状态
         if (position == selectedPosition) {
-            holder.itemView.setBackgroundColor(0xFFE0E0E0); // 设置背景为浅灰色
-            holder.tvName.setTypeface(null, Typeface.BOLD); // 设置字体加粗
+            holder.itemView.setBackgroundColor(0xFFE0E0E0);
+            holder.tvName.setTypeface(null, Typeface.BOLD);
             holder.tvSubject.setTypeface(null, Typeface.BOLD);
-            holder.tvDetail.setTypeface(null,Typeface.BOLD);
+            holder.tvDetail.setTypeface(null, Typeface.BOLD);
             holder.arrowIcon.setImageResource(R.mipmap.ic_orange);
         } else {
-            holder.itemView.setBackgroundColor(0xFFFFFFFF); // 还原背景为白色
-            holder.tvName.setTypeface(null, Typeface.NORMAL); // 还原字体
+            holder.itemView.setBackgroundColor(0xFFFFFFFF);
+            holder.tvName.setTypeface(null, Typeface.NORMAL);
             holder.tvSubject.setTypeface(null, Typeface.NORMAL);
-            holder.tvDetail.setTypeface(null,Typeface.NORMAL);
+            holder.tvDetail.setTypeface(null, Typeface.NORMAL);
             holder.arrowIcon.setImageResource(R.mipmap.ic_white_right);
         }
 
-        // 监听点击事件
         holder.itemView.setOnClickListener(v -> {
-            selectedPosition = position;
-            notifyDataSetChanged(); // 刷新界面
-            listener.onItemClick(person);
+            if (selectedPosition != position) {
+                int previous = selectedPosition;
+                selectedPosition = position;
+                notifyItemChanged(previous);
+                notifyItemChanged(position);
+                listener.onItemClick(person);
+            }
         });
     }
 
@@ -80,7 +81,7 @@ public class TeacherIntroAdapter extends RecyclerView.Adapter<TeacherIntroAdapte
 
     static class PersonViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvSubject, tvDetail;
-        ImageView arrowIcon; // 向右箭头
+        ImageView arrowIcon;
         CircleImageView circleImageView;
 
         public PersonViewHolder(@NonNull View itemView) {
@@ -89,12 +90,15 @@ public class TeacherIntroAdapter extends RecyclerView.Adapter<TeacherIntroAdapte
             tvSubject = itemView.findViewById(R.id.tv_subject);
             tvDetail = itemView.findViewById(R.id.tv_detail);
             circleImageView = itemView.findViewById(R.id.img_header);
-            arrowIcon = itemView.findViewById(R.id.iv_arrow); // 绑定箭头
+            arrowIcon = itemView.findViewById(R.id.iv_arrow);
         }
     }
+
     public void setSelectedPosition(int position) {
+        int previous = selectedPosition;
         selectedPosition = position;
-        notifyDataSetChanged();
+        notifyItemChanged(previous);
+        notifyItemChanged(position);
     }
 }
 

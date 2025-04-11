@@ -8,8 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
-
-import com.example.mytablet.MainActivity;
 import com.example.mytablet.R;
 import io.reactivex.annotations.NonNull;
 import retrofit2.Call;
@@ -77,9 +75,6 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
         startAutoRefresh();
-        if (getActivity() instanceof MainActivity) {
-            ((MainActivity) getActivity()).updateUI();
-        }
     }
 
     @Override

@@ -39,6 +39,12 @@ public interface ApiService {
             @Query("pageSize") int pageSize,
             @Query("pageNum") int pageNum
     );
+    @GET("ccms/bp/courses")
+    Call<Result<CourseBean>> getCourses(
+            @Query("pageSize") int pageSize,
+            @Query("pageNum") int pageNum
+    );
+
     @GET("ccms/bp/course/{courseId}")
     Call<Result<HomeDetail>> getCourseDetail(@Path("courseId") String courseId);
     @GET("ccms/bp/course/calendar")

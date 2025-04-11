@@ -10,12 +10,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
-
-import com.example.mytablet.MainActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import com.example.mytablet.R;
 import com.example.mytablet.ui.api.ApiClient;
 import com.example.mytablet.ui.api.ApiService;
@@ -104,6 +103,7 @@ public abstract class BaseFragment extends Fragment {
                     countdownTextView.setText("自动关闭倒计时 " + millisUntilFinished / 1000 + "s");
                 }
             }
+
             @Override
             public void onFinish() {
                 Log.d("Countdown", "倒计时结束，返回 HomeFragment");
@@ -121,10 +121,37 @@ public abstract class BaseFragment extends Fragment {
 
     protected void navigateToHome() {
         if (getActivity() != null) {
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new HomeFragment())
-                    .commitAllowingStateLoss();  // 允许状态丢失
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            // 使用 replace 来避免 Fragment 堆栈问题
+            transaction.replace(R.id.fragment_container, new HomeFragment());
+            transaction.addToBackStack(null); // 可以加入栈
+            transaction.commitAllowingStateLoss();  // 允许状态丢失，防止崩溃
         }
+    }
+
+    // 防止 Fragment 切换时发生状态丢失
+    protected void loadFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+        String tag = fragment.getClass().getSimpleName();
+        Fragment targetFragment = fragmentManager.findFragmentByTag(tag);
+
+        if (targetFragment == null) {
+            // Fragment 没有缓存，进行替换
+            transaction.replace(R.id.fragment_container, fragment, tag);
+        } else {
+            // 显示已缓存的 Fragment
+            transaction.show(targetFragment);
+        }
+
+        // 隐藏当前 Fragment
+        Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
+        if (currentFragment != null) {
+            transaction.hide(currentFragment);
+        }
+
+        transaction.commitAllowingStateLoss(); // 允许状态丢失，防止崩溃
     }
 }
 

@@ -22,7 +22,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="教师介绍"
+                android:text="课程介绍"
                 android:layout_gravity="center|left"
                 android:layout_marginLeft="20dp"
                 android:textSize="24sp"
@@ -46,7 +46,7 @@
                         android:layout_height="60dp"
                         android:layout_marginLeft="20dp"
                         android:background="@color/white"
-                        android:text="文学类"/>
+                        android:text=""/>
 
                     <Button
                         android:id="@+id/btn_photography"
@@ -54,7 +54,7 @@
                         android:layout_height="60dp"
                         android:layout_marginLeft="20dp"
                         android:background="#f3cda6"
-                        android:text="摄影类"/>
+                        android:text=""/>
                 </LinearLayout>
             </HorizontalScrollView>
         </LinearLayout>
