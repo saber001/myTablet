@@ -83,7 +83,7 @@
                 android:text="自动关闭倒计时 43s"
                 android:layout_gravity="center"
                 android:textColor="#808080"
-                android:textSize="18sp"/>
+                android:textSize="20sp"/>
         </LinearLayout>
     </LinearLayout>
 

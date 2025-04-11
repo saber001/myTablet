@@ -45,6 +45,7 @@ public class ViewCoursesFragment extends BaseFragment {
         recyclerView.setAdapter(courseAdapter);
 
         loadSubjects();
+        loadCourses(null,10,1);
 
         // 获取倒计时 TextView 并启动倒计时
         TextView countdownTextView = view.findViewById(R.id.tv_countdown);
@@ -65,7 +66,6 @@ public class ViewCoursesFragment extends BaseFragment {
         } else {
             call = apiService.getCourses(subjectId, pageSize, pageNum); // 带 subjectId
         }
-
         call.enqueue(new Callback<Result<CourseBean>>() {
             @Override
             public void onResponse(Call<Result<CourseBean>> call, Response<Result<CourseBean>> response) {
@@ -102,8 +102,6 @@ public class ViewCoursesFragment extends BaseFragment {
                     List<SubjectBean> subjects = response.body().getData(); // 兼容 data/rows
                     if (subjects != null) {
                         addButtons(subjects);
-                    } else {
-                        Utils.showToast("数据获取失败");
                     }
                 } else {
                     Utils.showToast("数据获取失败");
@@ -159,7 +157,6 @@ public class ViewCoursesFragment extends BaseFragment {
         button.setBackgroundColor(Color.parseColor("#f3cda6")); // 选中颜色
         button.setTextColor(Color.BLACK);
         selectedButton = button;
-
         // 加载选中学科的课程
         loadCourses(subject.subjectId, 10, 1);
     }

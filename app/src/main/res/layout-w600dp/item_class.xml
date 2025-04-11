@@ -20,7 +20,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textColor="#ee7802"
-            android:textSize="18sp"/>
+            android:textSize="20sp"/>
 
         <TextView
             android:id="@+id/address"
@@ -29,7 +29,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textColor="#808080"
-            android:textSize="18sp"/>
+            android:textSize="20sp"/>
 
         <TextView
             android:id="@+id/area"
@@ -38,7 +38,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textColor="#808080"
-            android:textSize="18sp"/>
+            android:textSize="20sp"/>
 
     </LinearLayout>
 

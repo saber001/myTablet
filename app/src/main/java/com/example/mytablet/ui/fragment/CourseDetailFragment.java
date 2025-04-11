@@ -44,15 +44,15 @@ public class CourseDetailFragment extends BaseFragment {
         recyclerView = view.findViewById(R.id.recyclerView);
         emptyTextView = view.findViewById(R.id.emptyTextView); // 获取 TextView
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        if (dayInfo.isToday() && dayInfo.isEmptyDay()){
+        if (courseList == null || courseList.isEmpty()) {
             emptyTextView.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
-        }else {
+        } else {
             emptyTextView.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
+            mAdapter = new CourseDetailAdapter(courseList);
+            recyclerView.setAdapter(mAdapter);
         }
-        mAdapter = new CourseDetailAdapter(courseList);
-        recyclerView.setAdapter(mAdapter);
         return view;
     }
 }

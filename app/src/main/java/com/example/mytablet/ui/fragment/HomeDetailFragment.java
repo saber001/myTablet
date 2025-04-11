@@ -83,8 +83,6 @@ public class HomeDetailFragment extends BaseFragment {
                     if (result.getCode() == 200) {
                         HomeDetail data = result.getData();
                         updateUI(data);
-                    } else {
-                        Utils.showToast("CourseDetail"+ "请求失败：" + result.getMsg());
                     }
                 } else {
                     Utils.showToast("CourseDetail"+ "请求失败：" + response.message());

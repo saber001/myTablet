@@ -35,9 +35,11 @@ import static com.google.android.material.internal.ViewUtils.dpToPx;
 public class TeaIntroDetailFragment extends BaseFragment {
    private static final String ARG_USER_ID = "userId";
    private String userId;
-   private TextView userName,level,info;
+   private TextView userName, level, info;
    private LinearLayout ll_subject;
    private CircleImageView photoUrl;
+   private Call<Result<TeacherIntro>> apiCall;
+
    public static TeaIntroDetailFragment newInstance(String userId) {
       TeaIntroDetailFragment fragment = new TeaIntroDetailFragment();
       Bundle args = new Bundle();
@@ -58,60 +60,100 @@ public class TeaIntroDetailFragment extends BaseFragment {
    @Override
    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
       View view = inflater.inflate(R.layout.fragment_detail_teaintro, container, false);
+      // 需要保证 fragment 添加到视图后再进行数据请求
       fetchTeacherDetail(userId);
+
       userName = view.findViewById(R.id.userName);
       level = view.findViewById(R.id.level);
       info = view.findViewById(R.id.info);
       ll_subject = view.findViewById(R.id.ll_subject);
       photoUrl = view.findViewById(R.id.photourl);
+
       return view;
    }
 
    private void fetchTeacherDetail(String userId) {
-      apiService.getTeacherDetail(userId).enqueue(new Callback<Result<TeacherIntro>>() {
+      // 确保 Fragment 被添加
+      if (!isAdded()) return;
+
+      apiCall = apiService.getTeacherDetail(userId);
+      apiCall.enqueue(new Callback<Result<TeacherIntro>>() {
          @Override
          public void onResponse(Call<Result<TeacherIntro>> call, Response<Result<TeacherIntro>> response) {
-            if (response.isSuccessful() && response.body() != null) {
+            if (isAdded() && response.isSuccessful() && response.body() != null) {
                TeacherIntro teacher = response.body().getData();
-               userName.setText(teacher.getUserName());
-               level.setText(Utils.getLevelText(teacher.getLevel()));
-               info.setText(teacher.getInfo());
-
-               String subjectStr = teacher.getSubject(); // 从数据源获取
-               if (subjectStr == null || subjectStr.isEmpty()) return;
-               ll_subject.removeAllViews(); // 清除旧的 View
-               String[] subjects = subjectStr.split(","); // 按逗号拆分
-               for (String subject : subjects) {
-                  Button button = new Button(getActivity());
-                  LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                          dpToPx(110), dpToPx(50)); // 设置宽高
-                  params.setMargins(dpToPx(10), 0, 0, 0); // 设置间距
-                  button.setLayoutParams(params);
-                  button.setText(subject);
-                  button.setTextSize(18);
-                  button.setGravity(Gravity.CENTER);
-                  button.setTextColor(Color.WHITE);
-                  button.setBackgroundColor(Color.parseColor("#EE7802")); // 设置背景色
-                  ll_subject.addView(button); // 添加到 LinearLayout
+               // 确保 UI 更新在主线程
+               if (getActivity() != null) {
+                  getActivity().runOnUiThread(new Runnable() {
+                     @Override
+                     public void run() {
+                        updateUI(teacher);
+                     }
+                  });
                }
-               // 加载头像
-               Glide.with(getActivity())
-                       .load(teacher.getPhotoUrl())
-                       .into(photoUrl);
-            }else {
+            } else {
                Utils.showToast("请求失败，错误码：" + response.code());
             }
          }
 
          @Override
          public void onFailure(Call<Result<TeacherIntro>> call, Throwable t) {
-            Utils.showToast("网络请求失败: " + t.getMessage());
+            if (isAdded() && getActivity() != null) {
+               getActivity().runOnUiThread(new Runnable() {
+                  @Override
+                  public void run() {
+                     Utils.showToast("网络请求失败: " + t.getMessage());
+                  }
+               });
+            }
          }
       });
    }
 
+   private void updateUI(TeacherIntro teacher) {
+      if (getActivity() == null || !isAdded()) return;
+
+      userName.setText(teacher.getUserName());
+      level.setText(Utils.getLevelText(teacher.getLevel()));
+      info.setText(teacher.getInfo());
+
+      String subjectStr = teacher.getSubject();
+      if (subjectStr != null && !subjectStr.isEmpty()) {
+         ll_subject.removeAllViews();
+         String[] subjects = subjectStr.split(",");
+         for (String subject : subjects) {
+            Button button = new Button(getActivity());
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    dpToPx(110), dpToPx(50));
+            params.setMargins(dpToPx(10), 0, 0, 0);
+            button.setLayoutParams(params);
+            button.setText(subject);
+            button.setTextSize(20);
+            button.setGravity(Gravity.CENTER);
+            button.setTextColor(Color.WHITE);
+            button.setBackgroundColor(Color.parseColor("#EE7802"));
+            ll_subject.addView(button);
+         }
+      }
+
+      // 加载头像
+      Glide.with(getActivity())
+              .load(teacher.getPhotoUrl())
+              .error(R.mipmap.ic_big_header)  // 加载失败时显示默认头像
+              .into(photoUrl);
+   }
+
    private int dpToPx(int dp) {
       return (int) (dp * getResources().getDisplayMetrics().density);
+   }
+
+   @Override
+   public void onStop() {
+      super.onStop();
+      // 取消请求以避免内存泄漏或空指针异常
+      if (apiCall != null && !apiCall.isCanceled()) {
+         apiCall.cancel();
+      }
    }
 }
 

@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.yx.YxDeviceManager;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -31,7 +30,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -129,28 +127,15 @@ public class MainActivity extends AppCompatActivity {
         loadFragment(instructionFragment);
     }
 
-    private void loadFragment(Fragment fragment) {
+    public void loadFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-
-        String tag = fragment.getClass().getSimpleName();
-        Fragment targetFragment = fragmentMap.get(tag);
-        // 隐藏当前 Fragment
         if (currentFragment != null) {
-            transaction.hide(currentFragment);
+            transaction.remove(currentFragment); // ⚠️ 直接 remove 掉当前 fragment，释放资源
         }
-        if (targetFragment == null) {
-            // 没有缓存过，添加
-            targetFragment = fragment;
-            fragmentMap.put(tag, targetFragment);
-            transaction.add(R.id.fragment_container, targetFragment, tag);
-        } else {
-            // 显示已缓存的 Fragment
-            transaction.show(targetFragment);
-        }
-        currentFragment = targetFragment;
-        transaction.commitAllowingStateLoss(); // 防止状态丢失崩溃
-        // ✅ 在这里主动调用 updateUI()
+        transaction.add(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
+        currentFragment = fragment;
+        transaction.commitAllowingStateLoss();
         updateUI(currentFragment);
     }
 

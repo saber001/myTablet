@@ -10,6 +10,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -110,8 +113,6 @@ public class CalendarFragment extends BaseFragment {
                         tv_empty.setVisibility(VISIBLE);
                         recyclerView.setVisibility(GONE);
                     }
-                } else {
-                    Utils.showToast("请求失败: " + response.message());
                 }
             }
             @Override
@@ -164,11 +165,9 @@ public class CalendarFragment extends BaseFragment {
     }
 
     private void loadCourseDetailFragment(DayInfo dayInfo) {
-        if (getActivity() != null) {
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.detail_container, CourseDetailFragment.newInstance(dayInfo))
-                    .commit();
-        }
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.detail_container, CourseDetailFragment.newInstance(dayInfo))
+                .commit();
     }
 }
 

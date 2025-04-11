@@ -13,6 +13,7 @@ import io.reactivex.annotations.NonNull;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -101,8 +102,6 @@ public class HomeFragment extends Fragment {
                         } else {
                             loadStaticCourseDetailFragment();
                         }
-                    } else {
-                        Utils.showToast("ApiError 请求失败，错误码: " + result.getCode());
                     }
                 } else {
                     Utils.showToast("ApiError 请求失败，HTTP 状态码: " + response.code());

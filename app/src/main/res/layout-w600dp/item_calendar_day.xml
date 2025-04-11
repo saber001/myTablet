@@ -7,7 +7,7 @@
     android:padding="8dp"
     android:gravity="center"
     android:layout_marginTop="10dp"
-    android:layout_marginLeft="10dp"
+    android:layout_marginLeft="5dp"
     android:background="@drawable/bg_calendar_day"
     tools:ignore="MissingDefaultResource">
 
@@ -27,7 +27,7 @@
         android:id="@+id/tv_course_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:gravity="center"
         android:text="2节"
         android:textColor="#808080"/>

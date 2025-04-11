@@ -19,7 +19,7 @@
             android:layout_weight="1"
             android:textColor="#ee7802"
             android:gravity="center"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:text=""/>
 
         <TextView
@@ -30,7 +30,7 @@
             android:gravity="center"
             android:layout_weight="1"
             android:text="课时："
-            android:textSize="18sp"/>
+            android:textSize="20sp"/>
 
         <TextView android:id="@+id/tv_teacher"
             android:layout_width="0dp"
@@ -39,12 +39,12 @@
             android:gravity="center"
             android:textColor="#808080"
             android:text="授课教师："
-            android:textSize="18sp"/>
+            android:textSize="20sp"/>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="2"
             android:gravity="left|center"
             android:orientation="horizontal">
 
@@ -52,9 +52,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#ea7a09"
+                android:layout_marginLeft="10dp"
                 android:gravity="left|center"
                 android:text="课程介绍："
-                android:textSize="18sp"/>
+                android:textSize="20sp"/>
 
             <TextView
                 android:id="@+id/tv_description"
@@ -64,7 +65,7 @@
                 android:gravity="center_vertical"
                 android:layout_marginStart="4dp"
                 android:text=""
-                android:textSize="18sp"/>
+                android:textSize="20sp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -90,6 +91,7 @@
                 android:textColor="@color/white"
                 android:layout_gravity="center"
                 android:layout_marginLeft="5dp"
+                android:textSize="16sp"
                 android:textStyle="bold"/>
 
         </LinearLayout>
