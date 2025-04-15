@@ -181,12 +181,11 @@
 
             <ImageView
                 android:id="@+id/img_scan"
-                android:layout_weight="1"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 android:layout_gravity="left|center"
                 android:layout_marginRight="20dp"
-                android:scaleType="fitXY"
+                android:scaleType="fitCenter"
                 android:src="@mipmap/ic_scan"/>
         </LinearLayout>
     </LinearLayout>

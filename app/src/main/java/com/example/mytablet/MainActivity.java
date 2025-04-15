@@ -27,9 +27,7 @@ import com.example.mytablet.ui.model.Result;
 import com.example.mytablet.ui.model.Utils;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -47,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
     private ApiService apiService;
     private String userGuide;
     private Runnable heartbeatRunnable;
-    private final Map<String, Fragment> fragmentMap = new HashMap<>();
     private Fragment currentFragment = null;
 
     @Override
@@ -151,10 +148,14 @@ public class MainActivity extends AppCompatActivity {
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.CHINA);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年M月d日", Locale.CHINA);
         String[] weeks = {"星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
-        tvTime.setText(timeFormat.format(calendar.getTime()));
+
+        // 实时获取系统当前时间
+        String nowTime = timeFormat.format(calendar.getTime());
+        tvTime.setText(nowTime);
         tvDate.setText(dateFormat.format(calendar.getTime()));
         tvWeek.setText(weeks[calendar.get(Calendar.DAY_OF_WEEK) - 1]);
-        handler.postDelayed(this::updateTime, 3600 * 1000);
+        // 重新设定1分钟或更短的更新间隔，确保不偏差
+        handler.postDelayed(this::updateTime, 60 * 1000); // 每分钟刷新一次，避免累计误差
     }
 
     public void fetchBoardInfo() {

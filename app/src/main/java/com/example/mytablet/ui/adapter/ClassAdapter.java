@@ -41,7 +41,7 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.CourseViewHo
    }
 
    static class CourseViewHolder extends RecyclerView.ViewHolder {
-      TextView roomName, area, address, text5;
+      TextView roomName, area, address;
       public CourseViewHolder(@NonNull View itemView) {
          super(itemView);
          roomName = itemView.findViewById(R.id.room_name);

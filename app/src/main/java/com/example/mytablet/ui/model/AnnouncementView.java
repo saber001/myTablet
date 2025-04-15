@@ -10,11 +10,17 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.example.mytablet.R;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 public class AnnouncementView extends LinearLayout {
@@ -23,6 +29,7 @@ public class AnnouncementView extends LinearLayout {
     private Handler handler = new Handler(Looper.getMainLooper());
     private List<Notice> notices = new ArrayList<>();
     private int currentIndex = 0;
+    private ImageView ivDropdown;
 
     public AnnouncementView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -42,7 +49,7 @@ public class AnnouncementView extends LinearLayout {
         // 设置 TextSwitcher 文字切换效果
         tsNotice.setFactory(() -> {
             TextView textView = new TextView(context);
-            textView.setTextSize(16);
+            textView.setTextSize(18);
             textView.setTextColor(Color.BLACK);
             textView.setGravity(Gravity.CENTER_VERTICAL);
             textView.setLayoutParams(new FrameLayout.LayoutParams(
@@ -50,6 +57,18 @@ public class AnnouncementView extends LinearLayout {
                     ViewGroup.LayoutParams.WRAP_CONTENT
             ));
             return textView;
+        });
+        ivDropdown = findViewById(R.id.iv_dropdown);
+        ivDropdown.setOnClickListener(v -> {
+            if (notices != null && notices.size() > 1) {
+                handler.removeCallbacks(switchRunnable); // 清除旧轮播
+                // 手动切换到下一条
+                currentIndex = (currentIndex + 1) % notices.size();
+                tv_notice_index.setText(String.valueOf(currentIndex + 1));
+                tsNotice.setText(buildDisplayText(notices.get(currentIndex)));
+                // 恢复轮播（从点击后的下一条继续）
+                handler.postDelayed(switchRunnable, 10000);
+            }
         });
 
         tsNotice.setInAnimation(context, android.R.anim.fade_in);
@@ -76,26 +95,41 @@ public class AnnouncementView extends LinearLayout {
         }
     }
 
+    private final DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("MM-dd HH:mm");
+
     private void updateNoticeText() {
         if (notices.isEmpty()) return;
-        Notice notice = notices.get(currentIndex);
-        String displayText = notice.getSubjectName() + "：" + notice.getContent();
-        tsNotice.setText(displayText);
+        currentIndex = 0;
+        tv_notice_index.setText("1");
+        tsNotice.setText(buildDisplayText(notices.get(currentIndex)));
     }
 
-    private Runnable switchRunnable = new Runnable() {
+    private final Runnable switchRunnable = new Runnable() {
         @Override
         public void run() {
+            if (notices == null || notices.isEmpty()) return;
+
             currentIndex = (currentIndex + 1) % notices.size();
-            // 更新公告序号
-            int displayIndex = currentIndex + 1;
-            tv_notice_index.setText(String.valueOf(displayIndex));
-            // 切换公告内容
-            tsNotice.post(() -> tsNotice.setText(notices.get(currentIndex).getContent()));
-            handler.postDelayed(this, 10000); // 10秒后切换
+            tv_notice_index.setText(String.valueOf(currentIndex + 1));
+            final String displayText = buildDisplayText(notices.get(currentIndex));
+            tsNotice.post(() -> tsNotice.setText(displayText));
+
+            handler.postDelayed(this, 10000);
         }
     };
 
+    private String buildDisplayText(Notice notice) {
+        String formattedTime;
+        try {
+            LocalDateTime dateTime = LocalDateTime.parse(notice.getCreateTime(), inputFormatter);
+            formattedTime = dateTime.format(outputFormatter);
+        } catch (Exception e) {
+            e.printStackTrace();
+            formattedTime = notice.getCreateTime(); // fallback 显示原始
+        }
+        return "[ " + notice.getSubjectName() + " ]：" + notice.getContent() + "          " + formattedTime;
+    }
 }
 
 

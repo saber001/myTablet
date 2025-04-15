@@ -68,5 +68,15 @@
             android:layout_weight="1"
             android:gravity="center_vertical" />
     </LinearLayout>
-
+    <!-- 下拉按钮区域（新增） -->
+    <ImageView
+        android:id="@+id/iv_dropdown"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:background="#ee7802"
+        android:src="@mipmap/ic_downs"
+        android:contentDescription="下拉菜单"
+        android:clickable="true"
+        android:focusable="true" />
 </LinearLayout>
