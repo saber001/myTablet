@@ -81,7 +81,7 @@
             <ImageView
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@mipmap/icon_three"
+                android:src="@mipmap/icon_teacher"
                 android:layout_gravity="center"/>
 
             <TextView

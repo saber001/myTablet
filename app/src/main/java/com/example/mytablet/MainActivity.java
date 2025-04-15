@@ -67,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void initDeviceManager() {
         yxDeviceManager = YxDeviceManager.getInstance(this);
-//        ApiClient.setDeviceSerialNumber(yxDeviceManager.getSerialno());
-        ApiClient.setDeviceSerialNumber("bfcc2b9ab3bc770a");  // 测试数据
+        ApiClient.setDeviceSerialNumber(yxDeviceManager.getSerialno());
+//        ApiClient.setDeviceSerialNumber("bfcc2b9ab3bc770a");  // 测试数据
     }
 
     private void initApiService() {

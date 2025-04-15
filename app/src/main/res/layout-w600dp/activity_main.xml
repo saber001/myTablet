@@ -225,7 +225,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
-                    android:src="@mipmap/icon_one"
+                    android:src="@mipmap/icon_home"
                     android:layout_gravity="center"/>
                 
                 <TextView
@@ -252,7 +252,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
-                    android:src="@mipmap/icon_two"
+                    android:src="@mipmap/icon_location"
                     android:layout_gravity="center"/>
 
                 <TextView
@@ -280,7 +280,7 @@
                     android:layout_height="40dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="10dp"
-                    android:src="@mipmap/icon_three" />
+                    android:src="@mipmap/icon_teacher" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -306,7 +306,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
-                    android:src="@mipmap/icon_four"
+                    android:src="@mipmap/icon_course"
                     android:layout_gravity="center"/>
 
                 <TextView
