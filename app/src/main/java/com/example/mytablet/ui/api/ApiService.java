@@ -60,6 +60,6 @@ public interface ApiService {
     @GET("ccms/bp/clazz/today")
     Call<Result<List<HomeBean>>> getTodayClasses();
 
-    @GET("/ccms/bp/heart")
+    @GET("ccms/bp/heart")
     Call<Result<Void>> sendHeartbeat();
 }

@@ -4,6 +4,8 @@ public class BoardInfo {
 
     public RoomBean room;
     public SiteInfoBean siteInfo;
+
+    public String now;
     public class RoomBean {
         /**
          * createBy : admin

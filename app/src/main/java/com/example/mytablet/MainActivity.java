@@ -2,10 +2,13 @@ package com.example.mytablet;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.yx.YxDeviceManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -25,9 +28,11 @@ import com.example.mytablet.ui.fragment.InstructionFragment;
 import com.example.mytablet.ui.model.BoardInfo;
 import com.example.mytablet.ui.model.Result;
 import com.example.mytablet.ui.model.Utils;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.TimeZone;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -44,31 +49,48 @@ public class MainActivity extends AppCompatActivity {
     private SerialHelper serialHelper;
     private ApiService apiService;
     private String userGuide;
-    private Runnable heartbeatRunnable;
     private Fragment currentFragment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         initDeviceManager();
-        initApiService();
-        initViews();
-        initHandlers();
-        initSerialPort();
-        initClickListeners();
-
-        loadFragment(new HomeFragment());
-        updateTime();
-        fetchBoardInfo();
-        startHeartbeat();
     }
 
     private void initDeviceManager() {
         yxDeviceManager = YxDeviceManager.getInstance(this);
-        ApiClient.setDeviceSerialNumber(yxDeviceManager.getSerialno());
-//        ApiClient.setDeviceSerialNumber("bfcc2b9ab3bc770a");  // 测试数据
+        String serialNo = yxDeviceManager.getSerialno();
+//        serialNo = "bfcc2b9ab3bc770a";
+        if (TextUtils.isEmpty(serialNo)) {
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setTitle("设备异常")
+                    .setMessage("无法获取设备序列号，设备可能存在故障，5秒后将自动退出应用。")
+                    .setCancelable(false)
+                    .setPositiveButton("确认", (dialog1, which) -> exitApp())
+                    .create();
+            dialog.show();
+            // 自动延迟退出
+            new Handler(Looper.getMainLooper()).postDelayed(this::exitApp, 5000);
+            return;
+        } else {
+            ApiClient.setDeviceSerialNumber(serialNo);
+            yxDeviceManager.selfStart("com.example.mytablet");
+            initApiService();
+            initViews();
+            initHandlers();
+            initSerialPort();
+            initClickListeners();
+            loadFragment(new HomeFragment());
+            updateTime();
+            fetchBoardInfo();
+            startService(new Intent(this, HeartbeatService.class));
+        }
+    }
+
+    private void exitApp() {
+        finishAffinity(); // 结束所有 Activity
+        System.exit(0);   // 强制退出进程
     }
 
     private void initApiService() {
@@ -172,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
                         Glide.with(MainActivity.this).load(boardInfo.siteInfo.logoUrl).into(logo);
                         Glide.with(MainActivity.this).load(boardInfo.siteInfo.qrCodeUrl).into(img_scan);
                         userGuide = boardInfo.siteInfo.userGuideUrl;
+                        checkTimeSyncWithServer(boardInfo.now);
                     } else {
                         Utils.showToast("网络请求失败" + result.getMsg());
                     }
@@ -188,30 +211,29 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void startHeartbeat() {
-        heartbeatRunnable = () -> {
-            sendHeartbeat();
-            heartbeatHandler.postDelayed(heartbeatRunnable, 120 * 1000);
-        };
-        heartbeatHandler.post(heartbeatRunnable);
-    }
-
-    private void sendHeartbeat() {
-        apiService.sendHeartbeat().enqueue(new Callback<Result<Void>>() {
-            @Override
-            public void onResponse(Call<Result<Void>> call, Response<Result<Void>> response) {
-                if (response.isSuccessful()) {
-                    Log.d("Heartbeat", "心跳成功");
-                } else {
-                    Log.e("Heartbeat", "心跳失败 HTTP状态码: " + response.code());
-                }
+    private void checkTimeSyncWithServer(String serverTimeStr) {
+        if (TextUtils.isEmpty(serverTimeStr)) {
+            Log.e("TimeCheck", "服务器时间为空，无法比较！");
+            return;
+        }
+        try {
+            // 1. 解析服务器时间字符串 -> 毫秒值
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+            sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai")); // 设置时区，避免误差
+            long serverTimeMillis = sdf.parse(serverTimeStr).getTime();
+            // 2. 获取本地时间
+            long localTimeMillis = System.currentTimeMillis();
+            // 3. 比较差值
+            long diff = Math.abs(serverTimeMillis - localTimeMillis);
+            if (diff > 60 * 1000) { // 超过1分钟
+                yxDeviceManager.setSystemTime(serverTimeMillis);
+            } else {
+                Log.d("TimeCheck", "时间同步正常，差值：" + diff + "ms");
             }
-
-            @Override
-            public void onFailure(Call<Result<Void>> call, Throwable t) {
-                Log.e("Heartbeat", "心跳异常: " + t.getMessage());
-            }
-        });
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Log.e("TimeCheck", "解析服务器时间失败：" + serverTimeStr);
+        }
     }
 
     @Override

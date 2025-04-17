@@ -28,8 +28,6 @@ public class ApiClient {
                 // **全局添加 Authorization 头**
                 if (deviceSerialNumber != null && !deviceSerialNumber.isEmpty()) {
                     requestBuilder.header("Authorization", deviceSerialNumber);
-                } else {
-                    System.out.println("⚠️ 设备序列号为空，未添加 Authorization 头！");
                 }
 
                 Request request = requestBuilder.build();
